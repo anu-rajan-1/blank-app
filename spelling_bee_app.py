@@ -3,9 +3,11 @@ import pandas as pd
 from collections import Counter
 
 st.title("🐝 Bee is for Bunny")
+
 file_path = 'SpellingBee_Nov24.csv'
 df = pd.read_csv ('SpellingBee_Nov24.csv')
 df_lower = df.map(lambda x: x.lower() if isinstance(x, str) else x)
+
 tab1, tab2, tab3 = st.tabs(["Word Groups", "Solver", "Add Words"])
 
 def is_pangram (target_chars, word): 
@@ -103,6 +105,11 @@ def insert_word_if_not_exists(df, row_index, word):
     return df
 
 with tab3: 
+    changelog_file_path = 'dictionary_changelog.csv'
+    # Read the single-column CSV into a DataFrame
+    changelog_df = pd.read_csv(changelog_file_path, header=None, names=["Column"])
+
+
     target_word = st.text_input("Enter the word you want to add").lower().strip()
     if target_word != "": 
         target_letters = set(target_word)
@@ -129,13 +136,23 @@ with tab3:
                     st.write ("Added word to an existing word group: ")
                     st.markdown (df_lower.loc[index].dropna().tolist())
                     within_case = True
+
+                    # Append the new value as a new row
+                    changelog_df.loc[len(changelog_df)] = target_word
+                    st.write(changelog_df)
+                    
         if not within_case: #New word group
             new_row = [target_word] + [None] * (len(df_lower.columns) - 1)
             df_lower.loc[len(df_lower)] = new_row
             st.write ("Added " + target_word + " to form new word group")
             
+            changelog_df.loc[len(changelog_df)] = target_word
+
         # Save the updated DataFrame back to the CSV
         df_lower.to_csv(file_path, index=False)
+
+        changelog_df.to_csv(changelog_file_path, index=False, header=False)
+
 
 
 # Test CSV reading 
