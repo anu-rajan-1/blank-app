@@ -8,7 +8,7 @@ st.title("🐝 Bee is for Bunny")
 conn = st.connection("gsheets", type=GSheetsConnection)
 df = conn.read(
     worksheet="Words", 
-    ttl="10m"
+    ttl="1m"
 )
 df.drop(['Category'], axis=1,inplace=True)
 
