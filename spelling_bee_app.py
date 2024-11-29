@@ -58,14 +58,19 @@ with tab1:
 
 # what's going on with "none"
 def get_score(word, target_characters): 
-    if len(word) == 4: 
-        return 1
-    elif len(word) > 4: 
-        score = len(word)
-        if is_pangram(target_characters, word): 
-            score -= 7 #Normally this would be +=7 for a pangram, but since all pangrams are appended with space**(PANGRAM)**space, which adds 14 points already, we need to subtract 7 to get to the += 7
-        return score
-    return 0
+    score = 0; 
+    if is_pangram(target_characters, word): 
+        if len(word) == 18: # 4 letter word + 14 for space**(PANGRAM)**
+            score = 8 # 1 for 4 letter word + 7
+        else: 
+            score = len(word) - 7 #Normally this would be +=7 for a pangram, but since all pangrams are appended with space**(PANGRAM)**, which adds 14 points already, we need to subtract 7 to get to the += 7
+    else: 
+        if len(word) == 4: 
+            score = 1
+        elif len(word) > 4: 
+            score = len(word)
+    return score
+    
 
 def show_analytics(df, target_characters): 
     total_words = len(df)
